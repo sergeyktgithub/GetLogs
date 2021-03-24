@@ -1,0 +1,16 @@
+﻿<Application x:Class="GetLogsClient.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:GetLogsClient" 
+             xmlns:convertors="clr-namespace:GetLogsClient.Convertors"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+
+        <!--Convertors-->
+        <ResourceDictionary>
+            <convertors:BoolToVisibilityConvertor x:Key="KBoolToVisibilityConvertor" />
+            <convertors:NotBoolToVisibilityConvertor x:Key="KNotBoolToVisibilityConvertor" />
+        </ResourceDictionary>
+
+    </Application.Resources>
+</Application>
