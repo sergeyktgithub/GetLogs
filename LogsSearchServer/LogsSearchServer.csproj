@@ -88,11 +88,12 @@
     <Compile Include="Filters\SearchTextByRegExFileInfoFilter.cs" />
     <Compile Include="Handlers\IMsgHandler.cs" />
     <Compile Include="Handlers\MsgHandler.cs" />
+    <Compile Include="Handlers\PingMsgHandler.cs" />
     <Compile Include="Handlers\SearchAccIdMsgHandler.cs" />
     <Compile Include="Handlers\SearchInILogsMsgHandler.cs" />
     <Compile Include="Handlers\SearchInLogsMsgHandler.cs" />
     <Compile Include="Handlers\SendFileMsgHandler.cs" />
-    <Compile Include="MessageQueueHandler.cs" />
+    <Compile Include="PackageQueueHandler.cs" />
     <Compile Include="Models\FoundFile.cs" />
     <Compile Include="Models\LogFile.cs" />
     <Compile Include="Packer\FileFinder.cs" />

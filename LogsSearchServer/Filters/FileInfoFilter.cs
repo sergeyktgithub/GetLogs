@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace TestServerSocket.Filters
+namespace LogsSearchServer.Filters
 {
     public abstract class FileInfoFilter
     {

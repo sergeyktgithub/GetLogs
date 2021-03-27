@@ -75,12 +75,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\PacketExtensions.cs" />
-    <Compile Include="IMsgUdpListener.cs" />
-    <Compile Include="MessageUdp.cs" />
-    <Compile Include="MsgUdpListener.cs" />
-    <Compile Include="NetHelper.cs" />
+    <Compile Include="Extensions\PackageExtensions.cs" />
+    <Compile Include="IPackageQueue.cs" />
+    <Compile Include="IUdpListener.cs" />
+    <Compile Include="IUdpMessage.cs" />
+    <Compile Include="UdpMessage.cs" />
+    <Compile Include="PackageQueue.cs" />
+    <Compile Include="Helpers\NetHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UdpListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

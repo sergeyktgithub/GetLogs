@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading;
+using LogsSearchServer;
+using LogsSearchServer.Handlers;
 using NetCom;
 using NetComModels;
 using Serilog;
-using TestServerSocket.Handlers;
 
 namespace TestServerSocket
 {
@@ -20,14 +21,15 @@ namespace TestServerSocket
 
             CancellationTokenSource cts = new CancellationTokenSource();
 
-            IMsgUdpListener msgUdpListener = new MsgUdpListener(GlobalProperties.ServerMsgPort, cts.Token);
-            msgUdpListener.Start();
+            IUdpListener udpListener = new UdpListener(GlobalProperties.ServerMsgPort, cts.Token);
+            IPackageQueue packageQueue = new PackageQueue(udpListener, cts.Token);
 
-            MessageQueueHandler queueHandler = new MessageQueueHandler(msgUdpListener, cts.Token);
+            PackageQueueHandler queueHandler = new PackageQueueHandler(packageQueue, cts.Token);
 
             queueHandler.AddHandler(new SearchInLogsMsgHandler(pathToLogs, cts.Token));
             queueHandler.AddHandler(new SearchInILogsMsgHandler(pathToLogs, cts.Token));
             queueHandler.AddHandler(new SendFileMsgHandler(pathToLogs, cts.Token));
+            queueHandler.AddHandler(new PingMsgHandler());
 
             Thread.Sleep(1000 * 60 * 60);
             return 0;

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace TestServerSocket.Extensions
+namespace LogsSearchServer.Extensions
 {
     public static class TempDirExtensions
     {

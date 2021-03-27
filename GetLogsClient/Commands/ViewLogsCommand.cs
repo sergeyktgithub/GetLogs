@@ -1,4 +1,5 @@
-﻿using GetLogsClient.ViewModels;
+﻿using System.Threading.Tasks;
+using GetLogsClient.ViewModels;
 
 namespace GetLogsClient.Commands
 {
@@ -8,7 +9,7 @@ namespace GetLogsClient.Commands
         {
             if (parameter is IMainWindowViewModel viewModel)
             {
-                viewModel.GiveGlanceLogFiles();
+                Task.Run(() => { viewModel.GiveGlanceLogFiles(); });
             }
         }
     }

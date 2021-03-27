@@ -6,10 +6,10 @@ using System.Threading;
 using Timers = System.Timers;
 using Serilog;
 using IniSettings;
+using LogsSearchServer;
+using LogsSearchServer.Handlers;
 using NetCom;
 using NetComModels;
-using TestServerSocket;
-using TestServerSocket.Handlers;
 
 namespace logsService
 {
@@ -159,13 +159,14 @@ namespace logsService
         {
             Log.Debug("Begin InitLogsSearchServer");
 
-            IMsgUdpListener msgUdpListener = new MsgUdpListener(GlobalProperties.ServerMsgPort, _cancellationTokenSource.Token);
-            msgUdpListener.Start();
+            IUdpListener udpListener = new UdpListener(GlobalProperties.ServerMsgPort, _cancellationTokenSource.Token);
+            IPackageQueue packageQueue = new PackageQueue(udpListener, _cancellationTokenSource.Token);
 
-            MessageQueueHandler queueHandler = new MessageQueueHandler(msgUdpListener, _cancellationTokenSource.Token);
-            queueHandler.AddHandler(new SearchInLogsMsgHandler(_pathToLog, _cancellationTokenSource.Token));
-            queueHandler.AddHandler(new SearchInILogsMsgHandler(_pathToLog, _cancellationTokenSource.Token));
-            queueHandler.AddHandler(new SendFileMsgHandler(_pathToLog, _cancellationTokenSource.Token));
+            PackageQueueHandler packageQueueHandler = new PackageQueueHandler(packageQueue, _cancellationTokenSource.Token);
+            packageQueueHandler.AddHandler(new SearchInLogsMsgHandler(_pathToLog, _cancellationTokenSource.Token));
+            packageQueueHandler.AddHandler(new SearchInILogsMsgHandler(_pathToLog, _cancellationTokenSource.Token));
+            packageQueueHandler.AddHandler(new SendFileMsgHandler(_pathToLog, _cancellationTokenSource.Token));
+            packageQueueHandler.AddHandler(new PingMsgHandler());
 
             Log.Debug("End InitLogsSearchServer");
         }

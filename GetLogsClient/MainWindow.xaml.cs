@@ -36,18 +36,5 @@ namespace GetLogsClient
         {
             _viewModel.ExternalInitializer();
         }
-
-        private void DateEdit_EditValueChanged(object sender, DevExpress.Xpf.Editors.EditValueChangedEventArgs e)
-        {
-            if (NDateEditFrom.DateTime > NDateEditTo.DateTime)
-            {
-                NDateEditTo.DateTime = NDateEditFrom.DateTime;
-            }
-        }
-
-        private void NInputPattern_OnProcessNewValue(DependencyObject sender, ProcessNewValueEventArgs e)
-        {
-            _viewModel.PatternList.Add(e.DisplayText);
-        }
     }
 }

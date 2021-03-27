@@ -72,23 +72,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Messages\BeginMsg.cs" />
+    <Compile Include="ErrorMessages\AccIdNotFoundErrorMsg.cs" />
     <Compile Include="GlobalProperties.cs" />
-    <Compile Include="Msg.cs" />
-    <Compile Include="FilesFoundMsg.cs" />
-    <Compile Include="OkMessage.cs" />
-    <Compile Include="SearchByAccIdMsg.cs" />
-    <Compile Include="SearchByAccIdAndPatternMsg.cs" />
+    <Compile Include="Messages\Msg.cs" />
+    <Compile Include="Messages\FilesFoundMsg.cs" />
+    <Compile Include="Messages\PingMsg.cs" />
+    <Compile Include="Messages\PongMsg.cs" />
+    <Compile Include="Messages\SearchByAccIdMsg.cs" />
+    <Compile Include="Messages\SearchByAccIdAndPatternMsg.cs" />
     <Compile Include="PairNetPoints.cs" />
     <Compile Include="Packet.cs" />
-    <Compile Include="ErrorMsg.cs" />
-    <Compile Include="GetFileMsg.cs" />
-    <Compile Include="MsgText.cs" />
-    <Compile Include="MsgType.cs" />
+    <Compile Include="ErrorMessages\ErrorMsg.cs" />
+    <Compile Include="Messages\GetFileMsg.cs" />
+    <Compile Include="Messages\SendFileMsg.cs" />
+    <Compile Include="Messages\TextMsg.cs" />
+    <Compile Include="Messages\MsgType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ZipExtension\ZipExtension.csproj">
+      <Project>{875fd87d-de7b-4bcd-93b6-601bf1b5b246}</Project>
+      <Name>ZipExtension</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

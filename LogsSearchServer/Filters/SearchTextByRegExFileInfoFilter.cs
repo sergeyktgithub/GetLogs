@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace TestServerSocket.Filters
+namespace LogsSearchServer.Filters
 {
     public class SearchTextByRegExFileInfoFilter : FileInfoFilter
     {

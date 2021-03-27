@@ -133,9 +133,9 @@ namespace logsService
                         File.Delete(logFile);
 
                         countCopyFiles++;
-
-                        Log.Debug($"Скопировал: {logFile}");
                     }
+
+                    Log.Debug($"Файлов на сжатие: {countCopyFiles}");
 
                     if (countCopyFiles > 0)
                     {

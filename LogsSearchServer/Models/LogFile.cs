@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TestServerSocket.Models
+namespace LogsSearchServer.Models
 {
     public class LogFile
     {

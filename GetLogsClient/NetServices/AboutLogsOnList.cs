@@ -1,18 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using GetLogsClient.Models;
 using NetCom;
 using NetComModels;
+using NetComModels.Messages;
 
 namespace GetLogsClient.NetServices
 {
-    public class AboutLogs : AboutFiles<SearchByAccIdAndPatternMsg>
+    public class AboutLogsOnList : AboutFiles<SearchByAccIdAndPatternMsg>
     {
-        public AboutLogs(TwoEndPoints twoEndPoints, IMsgUdpListener msgUdpListener) : base(twoEndPoints, msgUdpListener)
+        public AboutLogsOnList(List<TwoEndPoints> twoEndPointsList, IPackageQueue packageQueue) : base(twoEndPointsList, packageQueue)
         {
         }
 
-        public async Task<PreparedArchive> CheckExistLogsAsync(string pattern, string accId, DateTime fromDateTime, DateTime toDateTime, int timeout = 1000 * 10)
+        public async Task<List<PreparedArchive>> CheckExistLogsAsync(string pattern, string accId, DateTime fromDateTime, DateTime toDateTime)
         {
             return await CheckExistFilesAsync(new SearchByAccIdAndPatternMsg()
             {

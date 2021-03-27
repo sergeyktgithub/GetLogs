@@ -1,15 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
+using LogsSearchServer.Extensions;
+using LogsSearchServer.Filters;
+using LogsSearchServer.Packer;
 using NetCom;
+using NetCom.Extensions;
+using NetCom.Helpers;
 using NetComModels;
-using TestServerSocket.Extensions;
-using TestServerSocket.Filters;
-using TestServerSocket.Packer;
+using NetComModels.ErrorMessages;
+using NetComModels.Messages;
+using ZipExtension;
 
-namespace TestServerSocket.Handlers
+namespace LogsSearchServer.Handlers
 {
     public abstract class SearchAccIdMsgHandler<T> : MsgHandler where T : SearchByAccIdMsg
     {
@@ -27,13 +33,16 @@ namespace TestServerSocket.Handlers
             return Directory.GetDirectories(pathToLogs).Select(Path.GetFileName).ToList();
         }
 
-        public override void SendAnswer(Packet packet)
+        public override void SendAnswer(Package package)
         {
             var pairNet = new TwoEndPoints(
                 NetHelper.GetLocalIpAddress(), GlobalProperties.ServerMsgPort,
-                packet.SourceEndPoint
+                package.SourceEndPoint
             );
-            var msgSearchInLogs = JsonSerializer.Deserialize<T>(packet.Msg);
+
+            UdpMessage.Send(pairNet, new BeginMsg());
+
+            var msgSearchInLogs = package.Deserialize<T>();
             var accountIdDirectoryList = GetAccIdDirectoryList(PathToLogs);
 
             if (accountIdDirectoryList.Any(x => x == msgSearchInLogs.AccId))
@@ -41,12 +50,16 @@ namespace TestServerSocket.Handlers
                 FileInfoFilters.Clear();
                 SetFilters(msgSearchInLogs);
 
-                var filesPacker = new FileFinder(msgSearchInLogs.AccId, PathToLogs, _baseDirName, FileInfoFilters);
-                filesPacker.Search();
-
-                if (filesPacker.IsEmpty)
+                var fileFinder = new FileFinder(msgSearchInLogs.AccId, PathToLogs, _baseDirName, FileInfoFilters);
+                fileFinder.ProcessMsgEvent += (sender, msg) =>
                 {
-                    MessageUdp.Send(pairNet, new FoundFilesMsg());
+                    UdpMessage.Send(pairNet, new TextMsg(msg));
+                };
+                fileFinder.Search();
+
+                if (fileFinder.IsEmpty)
+                {
+                    UdpMessage.Send(pairNet, new FoundFilesMsg());
                 }
                 else
                 {
@@ -55,10 +68,14 @@ namespace TestServerSocket.Handlers
                     tempDir.DeleteAllTempDir();
                     tempDir.CreateDirectory();
 
-                    filesPacker.FoundFiles.WriteFoundFilesConfig(tempDir, out var fileName);
+                    fileFinder.FoundFiles.WriteFoundFilesConfig(tempDir, out var fileName);
 
-                    MessageUdp.Send(pairNet, new FoundFilesMsg(fileName, filesPacker.FoundFiles.Select(x => x.FullPath).ToList(), filesPacker.FoundFiles.Sum(x => x.Size)));
+                    UdpMessage.Send(pairNet, new FoundFilesMsg(fileName, fileFinder.FoundFiles.Select(x => x.FullPath).ToList(), fileFinder.FoundFiles.Sum(x => x.Size)));
                 }
+            }
+            else
+            {
+                UdpMessage.Send(pairNet, new AccIdNotFoundErrorMsg(msgSearchInLogs.AccId));
             }
         }
 

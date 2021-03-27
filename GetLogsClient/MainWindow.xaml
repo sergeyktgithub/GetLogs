@@ -13,7 +13,7 @@
         xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
         x:Class="GetLogsClient.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="625.802" WindowState="Normal" ResizeMode="NoResize">
+        Title="MainWindow" Height="450" Width="625.802" WindowState="Normal">
     <Window.DataContext>
         <viewModels:MainWindowViewModel/>
     </Window.DataContext>
@@ -52,7 +52,6 @@
                 Mask="G"
                 MaskUseAsDisplayFormat="True"
                 Width="200" 
-                EditValueChanged="DateEdit_EditValueChanged" 
                 DateTime="{Binding FromDateTime}"
                 >
                 <dxe:DateEdit.StyleSettings>

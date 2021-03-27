@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -15,7 +16,26 @@ namespace ZipExtension
             ZipFile.CreateFromDirectory(sourceDirectoryName, destinationArchiveFileName);
         }
 
-        public static List<string> Extract(string sourceArchiveFileName)
+        public static string CreateFromDirectory(string sourceDirectoryName)
+        {
+            var name = Path.GetFileName(sourceDirectoryName);
+            var srcDirName = Path.GetDirectoryName(sourceDirectoryName);
+            var archiveFileName = Path.Combine(srcDirName ?? throw new InvalidOperationException(), name + ".zip");
+            ZipFile.CreateFromDirectory(sourceDirectoryName, archiveFileName);
+
+            return archiveFileName;
+        }
+
+        public static void ExtractToDirectoryByArchiveName(string sourceArchiveFileName)
+        {
+            var name = Path.GetFileNameWithoutExtension(sourceArchiveFileName);
+            var srcDirName = Path.GetDirectoryName(sourceArchiveFileName);
+            var destPath = Path.Combine(srcDirName, name);
+            Directory.CreateDirectory(destPath);
+            ZipFile.ExtractToDirectory(sourceArchiveFileName, destPath);
+        }
+
+        public static List<string> ExtractToArchiveDirectory(string sourceArchiveFileName)
         {
             if (!File.Exists(sourceArchiveFileName))
                 throw new FileNotFoundException("Архив не существует: " + sourceArchiveFileName);
@@ -36,7 +56,7 @@ namespace ZipExtension
                 }
             }
 
-            ZipFile.ExtractToDirectory(sourceArchiveFileName, Path.GetDirectoryName(sourceArchiveFileName));
+            ZipFile.ExtractToDirectory(sourceArchiveFileName, archiveDir);
             File.Delete(sourceArchiveFileName);
 
             return archFiles;
@@ -45,6 +65,50 @@ namespace ZipExtension
         public static ZipArchive OpenRead(string zipPath)
         {
             return ZipFile.OpenRead(zipPath);
+        }
+
+        public static byte[] CompressText(string text)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var zipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                {
+                    var demoFile = zipArchive.CreateEntry("file.txt");
+
+                    using (var entryStream = demoFile.Open())
+                    {
+                        using (var streamWriter = new StreamWriter(entryStream))
+                        {
+                            streamWriter.Write(text);
+                        }
+                    }
+                }
+
+                return memoryStream.ToArray();
+            }
+        }
+
+        public static string ExtractFromBytes(byte[] bytes)
+        {
+            using (var zippedStream = new MemoryStream(bytes))
+            {
+                using (var archive = new ZipArchive(zippedStream))
+                {
+                    var entry = archive.Entries.FirstOrDefault();
+                    if (entry == null) throw new NullReferenceException(nameof(entry) + "is null");
+
+                    using (var unzippedEntryStream = entry.Open())
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            unzippedEntryStream.CopyTo(ms);
+                            var unzippedArray = ms.ToArray();
+
+                            return Encoding.Default.GetString(unzippedArray);
+                        }
+                    }
+                }
+            }
         }
     }
 }

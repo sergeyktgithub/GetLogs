@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace TestServerSocket.Models
+namespace LogsSearchServer.Models
 {
     public class FoundFile
     {

@@ -1,4 +1,4 @@
-﻿namespace NetComModels
+﻿namespace NetComModels.Messages
 {
     public class GetFileMsg : Msg
     {

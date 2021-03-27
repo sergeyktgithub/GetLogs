@@ -1,11 +1,12 @@
 ﻿using NetComModels;
+using NetComModels.Messages;
 
-namespace TestServerSocket.Handlers
+namespace LogsSearchServer.Handlers
 {
     public interface IMsgHandler
     {
         MsgType MsgType { get; }
 
-        void SendAnswer(Packet packet);
+        void SendAnswer(Package package);
     }
 }

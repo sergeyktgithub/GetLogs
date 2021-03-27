@@ -3,18 +3,21 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 using System.Threading;
+using LogsSearchServer.Packer;
 using NetCom;
+using NetCom.Extensions;
+using NetCom.Helpers;
 using NetComModels;
+using NetComModels.ErrorMessages;
+using NetComModels.Messages;
 using Serilog;
-using TestServerSocket.Extensions;
-using TestServerSocket.Packer;
 
-namespace TestServerSocket.Handlers
+namespace LogsSearchServer.Handlers
 {
     public class SendFileMsgHandler : MsgHandler
     {
         public SendFileMsgHandler(string pathToLogs, CancellationToken token) 
-            : base(pathToLogs,token, NetComModels.MsgType.GetFile)
+            : base(pathToLogs,token, MsgType.GetFile)
         {
         }
 
@@ -30,24 +33,26 @@ namespace TestServerSocket.Handlers
             client.Close();
         }
 
-        public override void SendAnswer(Packet packet)
+        public override void SendAnswer(Package package)
         {
-            var pairNet = new TwoEndPoints(NetHelper.GetLocalIpAddress(), GlobalProperties.ServerMsgPort, packet.SourceEndPoint);
-            var getFileMsg = JsonSerializer.Deserialize<GetFileMsg>(packet.Msg);
+            var pairNet = new TwoEndPoints(NetHelper.GetLocalIpAddress(), GlobalProperties.ServerMsgPort, package.SourceEndPoint);
+            var getFileMsg = package.Deserialize<GetFileMsg>();
 
             if (File.Exists(getFileMsg.FilePath) == false)
             {
-                MessageUdp.Send(pairNet, new ErrorMsg($"Не удалось найти файл: {getFileMsg.FilePath}"));
+                UdpMessage.Send(pairNet, new ErrorMsg($"Не удалось найти файл: {getFileMsg.FilePath}"));
             }
             else
             {
-                MessageUdp.Send(pairNet, new OkMessage());
-
                 TempDir readTempDir = TempDir.CreateFromFullPath(getFileMsg.FilePath);
                 FilesPacker filesPacker = new FilesPacker(readTempDir);
                 filesPacker.Create();
 
-                SendFile(filesPacker.ZipPath, new IPEndPoint(packet.SourceEndPoint.Address, getFileMsg.DestPort));
+                UdpMessage.Send(pairNet, new SendFileMsg(filesPacker.ZipPath, (new FileInfo(filesPacker.ZipPath)).Length));
+
+                Thread.Sleep(1000);
+
+                SendFile(filesPacker.ZipPath, new IPEndPoint(package.SourceEndPoint.Address, getFileMsg.DestPort));
             }
         }
     }

@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
-namespace NetCom
+namespace NetCom.Helpers
 {
     public static class NetHelper
     {

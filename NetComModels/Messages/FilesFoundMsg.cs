@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.IO;
+using System.Text.Json.Serialization;
 
-namespace NetComModels
+namespace NetComModels.Messages
 {
     public class FoundFilesMsg : Msg
     {
         public string FullPath { get; set; }
         public List<string> Files { get; set; }
         public long TotalSize { get; set; }
+
+        [JsonIgnore]
+        public bool IsEmpty => Files.Count == 0;
 
         public FoundFilesMsg() : base(MsgType.FilesFound)
         {

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using TestServerSocket.Models;
+using LogsSearchServer.Models;
 
-namespace TestServerSocket.Extensions
+namespace LogsSearchServer.Extensions
 {
     public static class ListExtensions
     {

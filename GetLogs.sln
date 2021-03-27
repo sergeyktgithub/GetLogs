@@ -14,6 +14,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetComModels", "NetComModels\NetComModels.csproj", "{585D635B-B230-438C-8DEA-11BF4E93D18A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetLogsClient", "GetLogsClient\GetLogsClient.csproj", "{6087B56F-D002-4238-994C-986BA2A1DB6B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CCC4B1A3-8F14-42D7-9E10-D69BB40EFDB2} = {CCC4B1A3-8F14-42D7-9E10-D69BB40EFDB2}
+		{5B6012E4-0537-41E0-9EBF-B65C06549DA4} = {5B6012E4-0537-41E0-9EBF-B65C06549DA4}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZipExtension", "ZipExtension\ZipExtension.csproj", "{875FD87D-DE7B-4BCD-93B6-601BF1B5B246}"
 EndProject

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LogsSearchServer.Filters;
+using LogsSearchServer.Models;
+using NetComModels.Messages;
 using Serilog;
-using TestServerSocket.Extensions;
-using TestServerSocket.Filters;
-using TestServerSocket.Models;
 using ZipExtension;
 
-namespace TestServerSocket.Packer
+namespace LogsSearchServer.Packer
 {
     public class FileFinder
     {
@@ -20,6 +20,8 @@ namespace TestServerSocket.Packer
 
         public List<FoundFile> FoundFiles { get; }
         public bool IsEmpty => FoundFiles.Count == 0;
+
+        public event EventHandler<string> ProcessMsgEvent;
 
         public FileFinder(string requiredAccountId, string logPath, string baseDirName, List<FileInfoFilter> fileInfoFilters)
         {
@@ -40,6 +42,7 @@ namespace TestServerSocket.Packer
         {
             var logsPath = Path.Combine(_accountIdPath, NameDirLogs);
             var resultFoundFiles = new List<FoundFile>();
+            bool haveLogs = false;
 
             foreach (var subDir in Directory.GetDirectories(logsPath))
             {
@@ -56,6 +59,12 @@ namespace TestServerSocket.Packer
                     var foundFiles = SearchByFilter(srcPath);
                     if (foundFiles.Count > 0)
                     {
+                        if (haveLogs == false)
+                        {
+                            haveLogs = true;
+                            SwearInLog("Логи есть, подготовка списка");
+                        }
+
                         resultFoundFiles.AddRange(foundFiles);
                     }
                     else if (extractedArchives.Count > 0)
@@ -65,7 +74,15 @@ namespace TestServerSocket.Packer
                 }
             }
 
+            SwearInLog($"Нашел {resultFoundFiles.Count} файл(ов)");
+
             return resultFoundFiles;
+        }
+
+        private void SwearInLog(string msg)
+        {
+            OnProcessMsgEvent(msg);
+            Log.Debug(msg);
         }
 
         private static Dictionary<string, List<string>> ExtractAllArchives(string sourcePath)
@@ -77,7 +94,7 @@ namespace TestServerSocket.Packer
                 var sourceFileInfo = new FileInfo(sourceFilePath);
                 if (sourceFileInfo.Extension == ".zip")
                 {
-                    resultExtract[sourceFilePath] = Zip.Extract(sourceFilePath);
+                    resultExtract[sourceFilePath] = Zip.ExtractToArchiveDirectory(sourceFilePath);
                 }
             }
 
@@ -125,6 +142,11 @@ namespace TestServerSocket.Packer
             }
 
             return foundFiles;
+        }
+
+        protected virtual void OnProcessMsgEvent(string msg)
+        {
+            ProcessMsgEvent?.Invoke(this, msg);
         }
     }
 }

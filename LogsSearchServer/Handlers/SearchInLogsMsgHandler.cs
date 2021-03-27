@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
-using System.Threading;
-using NetCom;
+﻿using System.Threading;
+using LogsSearchServer.Filters;
 using NetComModels;
-using TestServerSocket.Filters;
-using TestServerSocket.Packer;
+using NetComModels.Messages;
 
-namespace TestServerSocket.Handlers
+namespace LogsSearchServer.Handlers
 {
     public class SearchInLogsMsgHandler : SearchAccIdMsgHandler<SearchByAccIdAndPatternMsg>
     {

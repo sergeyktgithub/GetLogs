@@ -1,7 +1,8 @@
 ﻿using System.Threading;
 using NetComModels;
+using NetComModels.Messages;
 
-namespace TestServerSocket.Handlers
+namespace LogsSearchServer.Handlers
 {
     public abstract class MsgHandler : IMsgHandler
     {
@@ -9,14 +10,14 @@ namespace TestServerSocket.Handlers
         protected readonly string PathToLogs;
         public MsgType MsgType { get; }
 
-        public MsgHandler(string pathToLogs, CancellationToken token, MsgType msgType)
+        protected MsgHandler(string pathToLogs, CancellationToken token, MsgType msgType)
         {
             Token = token;
             PathToLogs = pathToLogs;
             MsgType = msgType;
         }
 
-        public abstract void SendAnswer(Packet packet);
+        public abstract void SendAnswer(Package package);
 
         
     }

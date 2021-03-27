@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
+using LogsSearchServer.Extensions;
+using LogsSearchServer.Models;
 using Serilog;
-using TestServerSocket.Extensions;
-using TestServerSocket.Filters;
-using TestServerSocket.Models;
 using ZipExtension;
 
-namespace TestServerSocket.Packer
+namespace LogsSearchServer.Packer
 {
     public class FilesPacker
     {

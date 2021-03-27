@@ -2,6 +2,7 @@
 using System.Net;
 using System.Windows.Shapes;
 using NetComModels;
+using NetComModels.Messages;
 
 namespace GetLogsClient.Models
 {
@@ -15,9 +16,14 @@ namespace GetLogsClient.Models
         public List<string> Files => _msg.Files;
         public long TotalSize => _msg.TotalSize;
 
-        public bool IsEmpty => _msg == null || 
-                               string.IsNullOrEmpty(_msg.FullPath) ||
+        public bool IsEmpty => string.IsNullOrEmpty(_msg.FullPath) ||
                                _msg.Files.Count == 0;
+
+        public PreparedArchive()
+        {
+            Source = null;
+            _msg = new FoundFilesMsg();
+        }
 
         public PreparedArchive(IPEndPoint source, FoundFilesMsg msg)
         {

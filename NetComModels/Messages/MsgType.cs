@@ -1,13 +1,17 @@
-﻿namespace NetComModels
+﻿namespace NetComModels.Messages
 {
     public enum MsgType
     {
+        Ping,
+        Pong,
+        Begin,
         GetFile,
         SearchByAccIdAndPattern,
         SearchByAccId,
         FilesFound,
         Text,
+        SendFile,
         Error,
-        Ok,
+        AccIdNotFoundError
     }
 }

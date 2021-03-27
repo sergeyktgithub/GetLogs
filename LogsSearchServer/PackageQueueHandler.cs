@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using LogsSearchServer.Handlers;
 using NetCom;
-using TestServerSocket.Handlers;
 using SimpleTimers = System.Timers;
 
-namespace TestServerSocket
+namespace LogsSearchServer
 {
-    public class MessageQueueHandler : IDisposable
+    public class PackageQueueHandler : IDisposable
     {
         private SimpleTimers.Timer _timer;
         private ConcurrentStack<IMsgHandler> _sendFileMsgHandlers = new ConcurrentStack<IMsgHandler>();
 
-        protected readonly IMsgUdpListener UdpListener;
+        protected readonly IPackageQueue UdpListener;
         protected CancellationToken Token;
 
-        public MessageQueueHandler(IMsgUdpListener udpListener, CancellationToken token)
+        public PackageQueueHandler(IPackageQueue udpListener, CancellationToken token)
         {
             UdpListener = udpListener;
             Token = token;
@@ -23,10 +23,7 @@ namespace TestServerSocket
 
         public void AddHandler(IMsgHandler msgHandler)
         {
-            if (msgHandler == null)
-            {
-                throw new NullReferenceException();
-            }
+            if (msgHandler == null) throw new ArgumentNullException(nameof(msgHandler));
 
             _sendFileMsgHandlers.Push(msgHandler);
 
@@ -54,10 +51,8 @@ namespace TestServerSocket
             {
                 foreach (var msgHandler in _sendFileMsgHandlers)
                 {
-                    var inputMsg = UdpListener.GetPacket(msgHandler.MsgType);
-
-                    if (inputMsg != null)
-                        msgHandler.SendAnswer(inputMsg);
+                    if (UdpListener.TryGetPackage(msgHandler.MsgType, out var package))
+                        msgHandler.SendAnswer(package);
                 }
             }
             finally

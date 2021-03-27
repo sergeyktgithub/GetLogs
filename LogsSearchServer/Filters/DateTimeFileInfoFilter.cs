@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace TestServerSocket.Filters
+namespace LogsSearchServer.Filters
 {
     public class DateTimeFileInfoFilter : FileInfoFilter
     {
